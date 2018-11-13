@@ -21,34 +21,69 @@ class Companies(models.Model):
         return "%s" % self.company
 
 
-class Tags(models.Model):
-    """
-    Tags model
-    """
-    name = models.CharField(max_length=32, unique=True)
+class ListField(models.TextField):
 
-    def __str__(self):
-        return "%s" % self.name
+    def __init__(self, *args, **kwargs):
+        self.token = kwargs.pop('token', ',')
+        super().__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        if isinstance(value, ListField):
+            return value
+        if value is None:
+            return value
+        return value.split(self.token)
+
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return value
+        return self.to_python(value)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        value = super().get_db_prep_value(value, connection, prepared)
+        if value is not None:
+            return connection.Database.Binary(value)
+        return value
+
+    def get_prep_value(self, value):
+        if not value:
+            return
+        assert(isinstance(value, list) or isinstance(value, tuple) or isinstance(value, ListField))
+        return self.token.join(value)
+
+    def value_to_string(self, obj):
+        value = self.value_from_object(obj)
+        return self.get_prep_value(value)
 
 
-class Fruits(models.Model):
-    """
-    Fruits model
-    """
-    name = models.CharField(max_length=32, unique=True)
-
-    def __str__(self):
-        return "%s" % self.name
-
-
-class Vegetables(models.Model):
-    """
-    Vegetables model
-    """
-    name = models.CharField(max_length=32, unique=True)
-
-    def __str__(self):
-        return f"{self.name}"
+# class Tags(models.Model):
+#     """
+#     Tags model
+#     """
+#     name = models.CharField(max_length=32, unique=True)
+#
+#     def __str__(self):
+#         return "%s" % self.name
+#
+#
+# class Fruits(models.Model):
+#     """
+#     Fruits model
+#     """
+#     name = models.CharField(max_length=32, unique=True)
+#
+#     def __str__(self):
+#         return "%s" % self.name
+#
+#
+# class Vegetables(models.Model):
+#     """
+#     Vegetables model
+#     """
+#     name = models.CharField(max_length=32, unique=True)
+#
+#     def __str__(self):
+#         return f"{self.name}"
 
 
 class People(models.Model):
@@ -72,21 +107,9 @@ class People(models.Model):
     registered = models.DateTimeField(blank=True, null=True)
     greeting = models.TextField(blank=True, null=True)
     company = models.ForeignKey(Companies, related_name="employees", blank=True, null=True, on_delete=models.CASCADE)
-    favourite_fruits = models.ManyToManyField(
-        to='Fruits',
-        related_name='people',
-        blank=True,
-        symmetrical=False)
-    favourite_vegetables = models.ManyToManyField(
-        to='Vegetables',
-        related_name='people',
-        blank=True,
-        symmetrical=False)
-    tags = models.ManyToManyField(
-        Tags,
-        related_name='people',
-        blank=True,
-        symmetrical=False)
+    favourite_fruits = ListField(blank=True, null=True)
+    favourite_vegetables = ListField(blank=True, null=True)
+    tags = ListField(blank=True, null=True)
     friends = models.ManyToManyField(
         to='self',
         related_name='frended',

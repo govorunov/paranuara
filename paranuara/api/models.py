@@ -18,7 +18,7 @@ class Companies(models.Model):
         db_table = 'companies'
 
     def __str__(self):
-        return self.company
+        return "%s" % self.company
 
 
 class Tags(models.Model):
@@ -28,7 +28,7 @@ class Tags(models.Model):
     name = models.CharField(max_length=32, unique=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return "%s" % self.name
 
 
 class Fruits(models.Model):
@@ -38,7 +38,7 @@ class Fruits(models.Model):
     name = models.CharField(max_length=32, unique=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return "%s" % self.name
 
 
 class Vegetables(models.Model):
@@ -63,7 +63,7 @@ class People(models.Model):
     balance = models.CharField(max_length=64, blank=True, null=True)
     picture = models.CharField(max_length=256, blank=True, null=True)
     age = models.PositiveIntegerField(default=0, blank=True, null=True)
-    eye_color = models.CharField(max_length=32, blank=True, null=True)
+    eyeColor = models.CharField(max_length=32, blank=True, null=True)
     gender = models.CharField(max_length=16, blank=True, null=True)
     email = models.CharField(max_length=64, blank=True, null=True)
     phone = models.CharField(max_length=32, blank=True, null=True)

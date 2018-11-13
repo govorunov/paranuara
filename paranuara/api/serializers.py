@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Companies, People, Tags, Vegetables, Fruits
+from api.models import Companies, People, Tags, Vegetables, Fruits
 
 
 class FriendsSerializer(serializers.ModelSerializer):

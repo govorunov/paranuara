@@ -12,13 +12,13 @@ class Companies(models.Model):
     Companies model
     """
     index = models.IntegerField(primary_key=True, unique=True, blank=False, null=False)
-    name = models.CharField(max_length=255, blank=True, null=True)
+    company = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'companies'
 
     def __str__(self):
-        return self.name
+        return self.company
 
 
 class Tags(models.Model):

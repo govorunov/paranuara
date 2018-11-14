@@ -39,11 +39,11 @@ class ListField(models.TextField):
             return value
         return self.to_python(value)
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-        value = super().get_db_prep_value(value, connection, prepared)
-        if value is not None:
-            return connection.Database.Binary(value)
-        return value
+    # def get_db_prep_value(self, value, connection, prepared=False):
+    #     value = super().get_db_prep_value(value, connection, prepared)
+    #     if value is not None:
+    #         return connection.Database.Binary(value)
+    #     return value
 
     def get_prep_value(self, value):
         if not value:
@@ -90,7 +90,7 @@ class People(models.Model):
     """
     People Model
     """
-    index = models.PositiveIntegerField(primary_key=True, unique=True, blank=False, null=False)
+    index = models.PositiveIntegerField(primary_key=True, blank=False, null=False)
     name = models.CharField(max_length=128, blank=True, null=True)
     _id = models.CharField(max_length=128, blank=True, null=True)
     guid = models.CharField(max_length=128, blank=True, null=True)

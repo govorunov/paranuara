@@ -1,5 +1,22 @@
 from rest_framework import serializers
-from paranuara.api.models import Companies, People
+from .models import Companies, People
+
+FRUITS_SET = {'apple', 'apricot', 'banana', 'bilberry', 'blackberry', 'blackcurrant',
+              'blueberry', 'coconut', 'currant', 'cherry', 'cherimoya', 'clementine',
+              'cloudberry', 'date', 'damson', 'durian', 'elderberry', 'fig', 'feijoa',
+              'gooseberry', 'grape', 'grapefruit', 'huckleberry', 'jackfruit', 'jambul',
+              'jujube', 'kiwifruit', 'kumquat', 'lemon', 'lime', 'loquat', 'lychee', 'mango',
+              'melon', 'cantaloupe', 'honeydew', 'watermelon', 'rock', 'melon', 'nectarine',
+              'orange', 'passionfruit', 'peach', 'pear', 'plum', 'plumcot', 'prune',
+              'pineapple', 'pomegranate', 'pomelo', 'purple', 'mangosteen', 'raisin',
+              'raspberry', 'rambutan', 'redcurrant', 'satsuma', 'strawberry', 'tangerine',
+              'tomato', 'ugli', 'fruit'}
+
+VEGETABLES_SET = {'artichoke', 'asparagus', 'aubergine', 'beet', 'beetroot', 'bell pepper',
+                  'broccoli', 'brussels sprout', 'cabbage', 'carrot', 'cauliflower', 'celery',
+                  'corn', 'courgette', 'cucumber', 'eggplant', 'green bean', 'green onion',
+                  'leek', 'lettuce', 'mushroom', 'onion', 'pea', 'pepper', 'potato', 'pumpkin',
+                  'radish', 'spring onion', 'squash', 'sweet potato', 'tomato', 'zucchini'}
 
 
 class CompaniesSerializer(serializers.ModelSerializer):
@@ -52,12 +69,18 @@ class PeopleSerializer(serializers.Serializer):
         if 'company_id' in validated_data:
             company_id = validated_data.pop('company_id')
         person, created = People.objects.update_or_create(index=validated_data['index'], defaults=validated_data)
-        person.save()
+        if created:
+            person.save()
         if company_id:
             company, created = Companies.objects.get_or_create(index=company_id)
             if created:
                 company.save()
             person.company = company
+        for food in favorite_food:
+            if food.strip(',. ').lower() in VEGETABLES_SET:
+                person.favourite_vegetables.append(food)
+            else:
+                person.favourite_fruits.append(food)
         for friend_data in friends_list:
             friend, created = People.objects.get_or_create(**friend_data)
             if created:
@@ -68,4 +91,6 @@ class PeopleSerializer(serializers.Serializer):
         return person
 
     def update(self, instance, validated_data):
-        pass
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        return instance

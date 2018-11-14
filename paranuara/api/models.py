@@ -28,12 +28,10 @@ class ListField(models.TextField):
         if isinstance(value, ListField):
             return value
         if value is None:
-            return value
+            return []
         return value.split(self.token)
 
     def from_db_value(self, value, expression, connection):
-        if value is None:
-            return value
         return self.to_python(value)
 
     def get_prep_value(self, value):

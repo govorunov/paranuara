@@ -1,12 +1,5 @@
 from rest_framework import serializers
-from api.models import Companies, People
-from django.core.validators import MinValueValidator
-
-
-class FriendsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = People
-        fields = ('index',)
+from paranuara.api.models import Companies, People
 
 
 class CompaniesSerializer(serializers.ModelSerializer):
@@ -16,50 +9,63 @@ class CompaniesSerializer(serializers.ModelSerializer):
         fields = ("index", "company")
 
 
-class PeopleSerializer(serializers.ModelSerializer):
-    friends = FriendsSerializer(many=True, required=False)
-    favouriteFood = serializers.ListField(required=False)
+class StringListField(serializers.ListField):
+    child = serializers.CharField()
+
+
+class PeopleSerializer(serializers.Serializer):
+    index = serializers.IntegerField(min_value=0, required=True)
+    name = serializers.CharField(max_length=128, allow_blank=True, required=False)
+    _id = serializers.CharField(max_length=64, allow_blank=True, required=False)
+    guid = serializers.CharField(max_length=64, allow_blank=True, required=False)
+    has_died = serializers.BooleanField(default=False, required=False)
+    balance = serializers.CharField(max_length=64, allow_blank=True, required=False)
+    picture = serializers.CharField(max_length=256, allow_blank=True, required=False)
+    age = serializers.IntegerField(min_value=0, required=False)
+    eyeColor = serializers.CharField(max_length=32, allow_blank=True, required=False)
+    gender = serializers.CharField(max_length=16, allow_blank=True, required=False)
+    email = serializers.EmailField(max_length=64, allow_blank=True, required=False)
+    phone = serializers.CharField(max_length=32, allow_blank=True, required=False)
+    address = serializers.CharField(max_length=256, allow_blank=True, required=False)
+    about = serializers.CharField(allow_blank=True, required=False)
     registered = serializers.DateTimeField(input_formats=[
         'YYYY-MM-DDThh:mm[:ss[.uuuuuu]] [+HH:MM|-HH:MM|Z]',
         '%Y-%m-%dT%H:%M:%S %z',
-        'iso-8601'])
-    tags = serializers.ListField(required=False)
-    favourite_fruits = serializers.ListField(required=False)
-    favourite_vegetables = serializers.ListField(required=False)
+        'iso-8601'], required=False)
+    greeting = serializers.CharField(allow_blank=True, required=False)
+    company_id = serializers.IntegerField(required=False)
+    favourite_fruits = StringListField(required=False)
+    favourite_vegetables = StringListField(required=False)
+    tags = StringListField(required=False)
+    friends = serializers.ListField(required=False)
 
-    class Meta:
-        model = People
-        fields = ("_id", "index", "guid", "has_died", "balance", "picture",
-                  "age", "eyeColor", "name", "gender", "company_id", "email",
-                  "phone", "address", "about", "registered", "greeting", "friends", "tags",
-                  "favourite_fruits", "favourite_vegetables", "favouriteFood")
-        extra_kwargs = {
-            'index': {
-                'validators': [],
-            }
-        }
+    favouriteFood = StringListField(required=False)
 
     def create(self, validated_data):
-        friends_list = validated_data.pop('friends')
-        favorite_food = validated_data.pop('favouriteFood')
-        # tags = validated_data.pop('tags')
-        person, created = People.objects.update_or_create(**validated_data)
+        friends_list = None
+        favorite_food = None
+        company_id = None
+        if 'friends' in validated_data:
+            friends_list = validated_data.pop('friends')
+        if 'favouriteFood' in validated_data:
+            favorite_food = validated_data.pop('favouriteFood')
         if 'company_id' in validated_data:
             company_id = validated_data.pop('company_id')
+        person, created = People.objects.update_or_create(index=validated_data['index'], defaults=validated_data)
+        person.save()
+        if company_id:
             company, created = Companies.objects.get_or_create(index=company_id)
             if created:
                 company.save()
             person.company = company
-        person.save()
         for friend_data in friends_list:
-            friend, created = People.objects.get_or_create(friend_data)
+            friend, created = People.objects.get_or_create(**friend_data)
             if created:
                 friend.save()
-            person.friends.add(friend)
+            if person.index != friend.index:
+                person.friends.add(friend)
         person.save()
         return person
 
     def update(self, instance, validated_data):
-        instance.index = validated_data.get('index', instance.index)
-        instance.save()
-        return instance
+        pass

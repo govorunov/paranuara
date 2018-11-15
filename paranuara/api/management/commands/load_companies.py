@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-# from api.models import Companies, People, Tags, Vegetables, Fruits
 from api.serializers import CompaniesSerializer
-# from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 

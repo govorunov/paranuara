@@ -27,6 +27,9 @@ class CompaniesSerializer(serializers.ModelSerializer):
 
 
 class PeopleSerializer(serializers.ModelSerializer):
+    tags = serializers.ListField()
+    favourite_fruits = serializers.ListField()
+    favourite_vegetables = serializers.ListField()
 
     class Meta:
         model = People

@@ -1,4 +1,5 @@
 from django.db import models
+from .custom_fields import ListField
 
 
 class Companies(models.Model):
@@ -13,36 +14,6 @@ class Companies(models.Model):
 
     def __str__(self):
         return "%s" % self.company
-
-
-class ListField(models.TextField):
-    """
-    A custom Django filed to represent lists as comma separated string
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.token = kwargs.pop('token', ',')
-        super().__init__(*args, **kwargs)
-
-    def to_python(self, value):
-        if isinstance(value, ListField):
-            return value
-        if value is None:
-            return []
-        return value.split(self.token)
-
-    def from_db_value(self, value, expression, connection):
-        return self.to_python(value)
-
-    def get_prep_value(self, value):
-        if not value:
-            return
-        assert(isinstance(value, (list, tuple, ListField)))
-        return self.token.join(value)
-
-    def value_to_string(self, obj):
-        value = self.value_from_object(obj)
-        return self.get_prep_value(value)
 
 
 class People(models.Model):

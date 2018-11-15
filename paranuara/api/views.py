@@ -4,15 +4,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import People, Companies
-from .serializers import PeopleSerializer, CompaniesEmployeesSerializer, FruitsVegetablesSerializer
+from . import serializers
 
 
 class FruitsAndVegetablesViewset(viewsets.ReadOnlyModelViewSet):
     """
-    Given a person index (or id, name, guid) returns a list of fruits and vegetables they like.
+    Given a person index (id, name or guid) returns a list of fruits and vegetables they like.
     """
     queryset = People.objects.all()
-    serializer_class = FruitsVegetablesSerializer
+    serializer_class = serializers.FruitsVegetablesSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('_id', 'name', 'guid', 'index')
 
@@ -22,19 +22,19 @@ class CompanyEmployeesViewset(viewsets.ReadOnlyModelViewSet):
     Given a company index (or name) returns all its employees.
     """
     queryset = Companies.objects.all()
-    serializer_class = CompaniesEmployeesSerializer
+    serializer_class = serializers.CompaniesEmployeesSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('index', 'company')
 
 
-class PeopleViewset(viewsets.ReadOnlyModelViewSet):
+class TwoPeopleViewset(viewsets.ReadOnlyModelViewSet):
     """
     Given a company id (or name) returns all its employees.
     """
     queryset = People.objects.all()
-    serializer_class = FruitsVegetablesSerializer
-    # filter_backends = (DjangoFilterBackend,)
-    # filter_fields = ('company__index',)
+    serializer_class = serializers.PeopleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('name', 'index')
 
 
 # @api_view(['GET'])

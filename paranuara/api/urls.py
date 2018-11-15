@@ -27,6 +27,9 @@ router.register(r'fruits_and_vegetables',
 router.register(r'employees',
                 views.CompanyEmployeesViewset,
                 basename='employees')
+router.register(r'twopeople',
+                views.TwoPeopleViewset,
+                basename='twopeople')
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

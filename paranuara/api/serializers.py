@@ -23,14 +23,29 @@ class CompaniesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Companies
-        fields = ("index", "company")
+        fields = ('index', 'company')
+
+
+class PeopleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = People
+        fields = '__all__'
+
+
+class CompaniesEmployeesSerializer(serializers.ModelSerializer):
+    employees = PeopleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Companies
+        fields = ('index', 'company', 'employees', )
 
 
 class StringListField(serializers.ListField):
     child = serializers.CharField()
 
 
-class PeopleSerializer(serializers.Serializer):
+class PeopleImportSerializer(serializers.Serializer):
     index = serializers.IntegerField(min_value=0, required=True)
     name = serializers.CharField(max_length=128, allow_blank=True, required=False)
     _id = serializers.CharField(max_length=64, allow_blank=True, required=False)
@@ -93,4 +108,16 @@ class PeopleSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         for key, value in validated_data.items():
             setattr(instance, key, value)
+        instance.save()
         return instance
+
+
+class FruitsVegetablesSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='name')
+    fruits = serializers.ListField(source='favourite_fruits')
+    vegetables = serializers.ListField(source='favourite_vegetables')
+
+    class Meta:
+        model = People
+        fields = ('username', 'age', 'fruits', 'vegetables',)
+        read_only_fields = ('username', 'age', 'fruits', 'vegetables',)

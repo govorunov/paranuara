@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 # from api.models import Companies, People, Tags, Vegetables, Fruits
-from api.serializers import PeopleSerializer
+from api.serializers import PeopleImportSerializer
 # from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         try:
             with open(filename, 'rb') as companies_file:
                 data = JSONParser().parse(companies_file)
-                serializer = PeopleSerializer(data=data, many=True)
+                serializer = PeopleImportSerializer(data=data, many=True)
                 if serializer.is_valid():
                     serializer.validated_data
                     serializer.save()

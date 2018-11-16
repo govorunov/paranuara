@@ -14,10 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
-from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
-from rest_framework import renderers
 from rest_framework.routers import DefaultRouter
+from rest_framework.documentation import include_docs_urls
 
 # Create a router and register viewsets with it.
 router = DefaultRouter()
@@ -30,6 +29,7 @@ router.register(r'employees',
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
-    path('', include(router.urls)),
-    path('twopeople/<int:pk1>/<int:pk2>/', views.TwoPeopleView.as_view())
+    path('api/', include(router.urls)),
+    path('api/twopeople/<int:pk1>/<int:pk2>/', views.TwoPeopleView.as_view(), name='twopeople'),
+    path('', include_docs_urls(title='Paranuara API', public=True)),
 ]

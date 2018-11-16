@@ -1,5 +1,4 @@
 include LICENSE
 include README.md
-include assets/companies.json
-include assets/people.json
-include fixtures/assignment.json
+include paranuara/assets/*
+include paranuara/fixtures/*

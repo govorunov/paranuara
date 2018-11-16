@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import status, generics, viewsets
+from rest_framework import status, generics, viewsets, views
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -27,35 +27,21 @@ class CompanyEmployeesViewset(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('index', 'company')
 
 
-class TwoPeopleViewset(viewsets.ReadOnlyModelViewSet):
+class TwoPeopleView(views.APIView):
     """
-    Given a company id (or name) returns all its employees.
+    Given 2 people, provides their information and the list of their
+    friends in common which have brown eyes and are still alive.
     """
-    queryset = People.objects.all()
-    serializer_class = serializers.PeopleSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('name', 'index')
-
-
-# @api_view(['GET'])
-# def fruits_and_vegetables(request, person_id=None, person_index=None, person_guid=None):
-#     """
-#     Given 1 person, provide a list of fruits and vegetables they like.
-#     :param person_id:
-#     :param person_index:
-#     :param person_guid:
-#     :return: {"username": "Ahi", "age": "30", "fruits": ["banana", "apple"], "vegetables": ["beetroot", "lettuce"]}
-#     """
-#     if request.method == 'GET':
-#         if person_index is not None:
-#             person = People.objects.get(index=person_index)
-#         elif person_id is not None:
-#             person = People.objects.get(index=person_id)
-#         elif person_guid is not None:
-#             person = People.objects.get(index=person_guid)
-#         else:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#         serializer = FruitsVegetablesSerializer(person)
-#         return Response(serializer.data)
-#
-#     return Response(status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, pk1, pk2, format=None):
+        people = People.objects.filter(index__in=(pk1, pk2))
+        if people.count() != 2:
+            return Response({})
+        common_friends = people[0].friends.all().intersection(people[1].friends.all())
+        common_friends.filter(eyeColor='brown', has_died=False)
+        twopeople = {
+            'person1': people[0],
+            'person2': people[1],
+            'common_friends': common_friends
+        }
+        serializer = serializers.TwoPeopleSerializer(twopeople)
+        return Response(serializer.data)

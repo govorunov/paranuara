@@ -9,13 +9,20 @@ class ListField(models.TextField):
         self.token = kwargs.pop('token', ',')
         super().__init__(*args, **kwargs)
 
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs['token'] = self.token
+        return name, path, args, kwargs
+
     def to_python(self, value):
+
         class SubList(list):
             def __init__(self, token, *args):
                 self.token = token
                 super().__init__(*args)
             def __str__(self):
                 return self.token.join(self)
+
         if isinstance(value, list):
             return value
         if value is None:

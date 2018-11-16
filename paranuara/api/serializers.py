@@ -36,12 +36,28 @@ class PeopleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PeopleBriefSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = People
+        fields = ('index', 'name', 'age', 'address', 'phone',)
+
+
 class CompaniesEmployeesSerializer(serializers.ModelSerializer):
     employees = PeopleSerializer(many=True, read_only=True)
 
     class Meta:
         model = Companies
         fields = ('index', 'company', 'employees', )
+
+
+class TwoPeopleSerializer(serializers.BaseSerializer):
+    def to_representation(self, obj):
+        return {
+            'person1': PeopleBriefSerializer(obj['person1']).data,
+            'person2': PeopleBriefSerializer(obj['person2']).data,
+            'common_friends': PeopleBriefSerializer(obj['common_friends'], many=True).data,
+        }
 
 
 class StringListField(serializers.ListField):

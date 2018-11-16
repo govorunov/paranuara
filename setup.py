@@ -43,7 +43,7 @@ setup(
     author='Yaroslav Hovorunov',
     author_email='govorunov@gmail.com',
     description='A coding asignment for job interview',
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
     license='BSD',
     packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     include_package_data=True,

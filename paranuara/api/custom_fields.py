@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ListField(models.TextField):
     """
     A custom Django field to represent lists as comma separated strings
@@ -20,6 +21,7 @@ class ListField(models.TextField):
             def __init__(self, token, *args):
                 self.token = token
                 super().__init__(*args)
+
             def __str__(self):
                 return self.token.join(self)
 

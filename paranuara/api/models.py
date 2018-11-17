@@ -6,7 +6,7 @@ class Companies(models.Model):
     """
     Companies model
     """
-    index = models.AutoField(primary_key=True)
+    index = models.IntegerField(primary_key=True)
     company = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -20,7 +20,7 @@ class People(models.Model):
     """
     People Model
     """
-    index = models.AutoField(primary_key=True)
+    index = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=128, blank=True, null=True)
     _id = models.CharField(max_length=64, blank=True, null=True)
     guid = models.CharField(max_length=64, blank=True, null=True)

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from api.serializers import PeopleImportSerializer
+from paranuara.api.serializers import PeopleImportSerializer
 from rest_framework.parsers import JSONParser
 
 
@@ -16,7 +16,6 @@ class Command(BaseCommand):
                 data = JSONParser().parse(companies_file)
                 serializer = PeopleImportSerializer(data=data, many=True)
                 if serializer.is_valid():
-                    serializer.validated_data
                     serializer.save()
                     return "Successfully loaded %s" % filename
                 else:

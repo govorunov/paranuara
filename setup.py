@@ -49,10 +49,11 @@ setup(
     include_package_data=True,
     scripts=['paranuara/manage.py'],
     entry_points={
-        "console_scripts": ['paranuara = paranuara.paranuara:main']
+        "console_scripts": ['paranuara = paranuara.manage:main']
     },
     install_requires=['django >= 2',
                       'djangorestframework >= 3',
                       'coreapi >= 2',
-                      'django-filter >= 2'],
+                      'django-filter >= 2',
+                      'wsgiserver >= 1'],
 )

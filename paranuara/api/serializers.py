@@ -44,7 +44,7 @@ class PeopleBriefSerializer(serializers.ModelSerializer):
 
 
 class CompaniesEmployeesSerializer(serializers.ModelSerializer):
-    employees = PeopleSerializer(many=True, read_only=True)
+    employees = PeopleBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = Companies
@@ -103,8 +103,12 @@ class PeopleImportSerializer(serializers.Serializer):
         if 'company_id' in validated_data:
             company_id = validated_data.pop('company_id')
         person, created = People.objects.update_or_create(index=validated_data['index'], defaults=validated_data)
-        if created:
-            person.save()
+        if person.favourite_vegetables is None:
+            person.favourite_vegetables = []
+        if person.favourite_fruits is None:
+            person.favourite_fruits = []
+        # if created:
+        #     person.save()
         if company_id:
             company, created = Companies.objects.get_or_create(index=company_id)
             if created:

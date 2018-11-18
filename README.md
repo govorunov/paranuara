@@ -5,34 +5,47 @@
 ### Installation
 
 This program requires Python 3.5 or above to run.
+
 1. Some requirements:
 
     Install pip, if you don't already have:
+    
     ```commandline
     easy_install pip
     ```
+    
     Install virtualenv if you don't already have
+    
     ```commandline
     pip3 install virtualenv
     ```
+ 
  2. Choose a folder to install Paranuara. Create and activate new virtualenv.
+    
     On Unix:
+    
     ```commandline
     virtualenv myenv
     source myenv/bin/activate
     ```
+    
     On Windows:
+    
     ```commandline
     virtualenv myenv
     myenv\scripts\activate
     ```
  3. Install Paranuara
+
     ```commandline
     pip install https://github.com/govorunov/paranuara/archive/master.zip
     ```
+
     This will add `paranuara` command to the console, which offers same syntax one 
     could expect from `python manage.py` script.
+
  4. Run these commands to instantiate new paranuara application:
+
     ```commandline
     paranuara migrate
     paranuara loaddata assignment
@@ -43,16 +56,19 @@ Then navigate to http://localhost:8000
 ### Usage
 
 * To wipe database and import new JSON data use following commands:
+
     ```commandline
     paranuara flush
     paranuara load_companies companies.json
     paranuara load_people people.json
     ```
+
     Where `companies.json` and `people.json` are locations to JSON files containing new 
     data to import. JSON files should be in the format specified in the original 
     assignment.
     
 * To run tests:
+
     ```commandline
     paranuara test
     ``` 

@@ -27,7 +27,7 @@ class People(models.Model):
     has_died = models.BooleanField(default=False, blank=True, null=True)
     balance = models.CharField(max_length=64, blank=True, null=True)
     picture = models.CharField(max_length=256, blank=True, null=True)
-    age = models.PositiveIntegerField(default=0, blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True)
     eyeColor = models.CharField(max_length=32, blank=True, null=True)
     gender = models.CharField(max_length=16, blank=True, null=True)
     email = models.CharField(max_length=64, blank=True, null=True)

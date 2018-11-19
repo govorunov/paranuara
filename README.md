@@ -70,7 +70,7 @@ Then navigate to http://localhost:8000
 * To run tests:
 
     ```commandline
-    paranuara test
+    paranuara test paranuara
     ``` 
 
 ## Rest API endpoints:
